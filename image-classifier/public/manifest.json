@@ -1,0 +1,15 @@
+{
+  "short_name": "AI Classification System",
+  "name": "AI Classification System",
+  "icons": [
+    {
+      "src": "artificial-intelligence.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#7b2ff7",
+  "background_color": "#0f0c29"
+}
