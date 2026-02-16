@@ -34,8 +34,8 @@ function App() {
       </main>
       <footer className="App-footer">
         <p>
-          🔗 Backend API: <code>http://localhost:8000</code> | 
-          <a href="http://localhost:8000/docs" target="_blank" rel="noopener noreferrer">📚 API Docs</a>
+          🔗 Backend API: <code>https://ai-classification-system.onrender.com</code> | 
+          <a href="https://ai-classification-system.onrender.com" target="_blank" rel="noopener noreferrer">📚 API Docs</a>
         </p>
       </footer>
     </div>
