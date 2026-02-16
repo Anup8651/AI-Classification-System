@@ -3,5 +3,6 @@ uvicorn[standard]==0.32.0
 python-multipart==0.0.17
 opencv-python==4.10.0.84
 tensorflow-cpu
-numpy==2.0.2
+# numpy==2.0.2
+numpy<2.0.0
 Pillow==11.0.0
