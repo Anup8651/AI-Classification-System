@@ -306,9 +306,8 @@ async def predict_video(
                 "top_prediction": predictions[0] if predictions else None
             })
             
-            # --- ADD THIS LINE HERE ---
+            # --- MOVE THIS LINE INSIDE THE LOOP ---
             gc.collect()
-        
         # Aggregate predictions
         aggregated_result = aggregate_predictions(frame_predictions, aggregation_method)
         
