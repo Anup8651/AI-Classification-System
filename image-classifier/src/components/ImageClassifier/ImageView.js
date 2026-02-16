@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 
 const ImageView = ({ imageSrc, imageRef, onImageLoad }) => {
   return (
