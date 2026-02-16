@@ -1,4 +1,7 @@
+# import os
 import os
+import gc  # <--- ADD THIS LINE
+# ... rest of your imports
 # Hide annoying TensorFlow logs (oneDNN custom operations)
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
@@ -126,8 +129,10 @@ def classify_frame(frame: np.ndarray) -> List[Dict]:
         logger.error(f"Error classifying frame: {e}")
         raise HTTPException(status_code=500, detail=f"Classification error: {str(e)}")
 
-def extract_frames(video_path: str, num_frames: int = 10) -> List[np.ndarray]:
-    """Extract evenly distributed frames from video"""
+ # Ensure this is at the top of your main.py
+
+def extract_frames(video_path: str, num_frames: int = 10):
+    """Extract and RESIZE frames immediately to save memory"""
     frames = []
     cap = cv2.VideoCapture(video_path)
     
@@ -143,7 +148,7 @@ def extract_frames(video_path: str, num_frames: int = 10) -> List[np.ndarray]:
     
     if total_frames == 0:
         cap.release()
-        raise HTTPException(status_code=400, detail="Video file is empty or corrupted")
+        raise HTTPException(status_code=400, detail="Video file is empty")
     
     # Calculate frame indices to extract
     if total_frames <= num_frames:
@@ -156,16 +161,24 @@ def extract_frames(video_path: str, num_frames: int = 10) -> List[np.ndarray]:
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
         ret, frame = cap.read()
         if ret:
-            frames.append(frame)
+            # --- MEMORY OPTIMIZATION ---
+            # Resize the frame IMMEDIATELY to 224x224 (MobileNet input size)
+            # This saves over 80% RAM compared to full-res frames
+            resized_frame = cv2.resize(frame, (224, 224))
+            frames.append(resized_frame)
+            
+            # Explicitly delete the big raw frame and trigger cleanup
+            del frame
+            gc.collect() 
+            # ---------------------------
     
     cap.release()
     
     if not frames:
-        raise HTTPException(status_code=400, detail="Could not extract any frames from video")
+        raise HTTPException(status_code=400, detail="Could not extract any frames")
     
-    logger.info(f"Successfully extracted {len(frames)} frames")
+    logger.info(f"Successfully extracted {len(frames)} optimized frames")
     return frames, total_frames, fps, duration
-
 def aggregate_predictions(frame_predictions: List[List[Dict]], method: str = "average") -> Dict:
     """Aggregate predictions from multiple frames"""
     if not frame_predictions:
@@ -292,6 +305,9 @@ async def predict_video(
                 "timestamp": round((i / len(frames)) * duration, 2) if duration > 0 else 0,
                 "top_prediction": predictions[0] if predictions else None
             })
+            
+            # --- ADD THIS LINE HERE ---
+            gc.collect()
         
         # Aggregate predictions
         aggregated_result = aggregate_predictions(frame_predictions, aggregation_method)
