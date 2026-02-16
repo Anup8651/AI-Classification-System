@@ -15,7 +15,7 @@ const VideoUploader = () => {
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
 
-  const API_URL = "http://localhost:8000";
+  const API_URL = "https://ai-classification-system.onrender.com";
 
   const handleFileSelect = ({ file, error: fileError }) => {
     if (fileError) {
