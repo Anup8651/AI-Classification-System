@@ -1,0 +1,10 @@
+# React
+image-classifier/node_modules
+
+# Python
+video-classifier-backend/venv
+video-classifier-backend/__pycache__
+*.pyc
+
+# Environment
+.env
