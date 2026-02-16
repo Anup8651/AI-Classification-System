@@ -308,6 +308,7 @@ async def predict_video(
             
             # --- MOVE THIS LINE INSIDE THE LOOP ---
             gc.collect()
+            # ----------------------------------------
         # Aggregate predictions
         aggregated_result = aggregate_predictions(frame_predictions, aggregation_method)
         
