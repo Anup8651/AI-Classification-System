@@ -84,15 +84,18 @@ async def startup_event():
     load_model()
 
 def preprocess_frame(frame: np.ndarray) -> np.ndarray:
-    """Preprocess frame for MobileNetV2"""
-    # Resize to 224x224 (MobileNetV2 input size)
+    """Preprocess frame while keeping memory low"""
+    # Resize and convert in one go
     frame_resized = cv2.resize(frame, (224, 224))
-    # Convert BGR to RGB
     frame_rgb = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
-    # Normalize to [0, 1]
-    frame_normalized = frame_rgb / 255.0
-    # Add batch dimension
+    
+    # Use float32 to save space compared to float64
+    frame_normalized = frame_rgb.astype(np.float32) / 255.0
     frame_batch = np.expand_dims(frame_normalized, axis=0)
+    
+    # Cleanup immediately
+    del frame_resized
+    del frame_rgb
     return frame_batch
 
 def classify_frame(frame: np.ndarray) -> List[Dict]:
@@ -257,7 +260,7 @@ async def health_check():
 @app.post("/predict-video")
 async def predict_video(
     file: UploadFile = File(...),
-    num_frames: int = 10,
+    num_frames: int = 5,  # Changed from 10 to 5
     aggregation_method: str = "average"
 ):
     """
