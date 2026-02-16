@@ -1,10 +1,9 @@
-# React
-image-classifier/node_modules
+# Ignore Frontend dependencies
+image-classifier/node_modules/
+image-classifier/dist/
+image-classifier/.env
 
-# Python
-video-classifier-backend/venv
-video-classifier-backend/__pycache__
-*.pyc
-
-# Environment
-.env
+# Ignore Backend dependencies
+video-classifier-backend/venv/
+video-classifier-backend/__pycache__/
+video-classifier-backend/.env
